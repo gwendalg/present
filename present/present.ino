@@ -147,8 +147,13 @@ void play_song_completely(FatReader &file) {
   wave.play();
   while (wave.isplaying) {
     delay(150);
-    level = ((((uint32_t)wave.Level * PIXELS_USED) - 0x60000ULL) * PIXELS_USED / 2) >> 16;
+    // The logical foruma is
     // level = ((uint32_t)wave.Level * PIXELS_USED) >> 16;
+    // However, only the 6th to 8th LED would be lit.
+    // Alter the formula to expand that range.
+    // Do not trust the compiler for compiling constant in.
+    // Using 6 * (1 << 16) instead of 0x60000 would not work.
+    level = ((((uint32_t)wave.Level * PIXELS_USED) - 0x60000ULL) * PIXELS_USED / 2) >> 16;
     //level = ((wave.Level >> 5) * PIXELS_USED) >> 13;
     for (i = 0; i < PIXELS_USED; i++) {
       if (i <= level) {
